@@ -6,6 +6,7 @@ from epics_linter.db import (
     REC_TOO_LONG,
     ClosingBraceExpected,
     ClosingQuoteExpected,
+    InvalidDeclaration,
     OpeningBraceExpected,
     TooFewArguments,
     DB_ERROR as DB_EX,
@@ -40,10 +41,9 @@ class Linter:
                 if len(record[1]) > 60:
                     print_error(REC_TOO_LONG, record[1])
                     continue
-                else:
-                    for field in record[2:]:
-                        if field.children[0] == "DESC" and len(field.children[1]) > 40:
-                            print_error(DESC_TOO_LONG, field.children[1])
+                for field in record[2:]:
+                    if field.children[0] == "DESC" and len(field.children[1]) > 40:
+                        print_error(DESC_TOO_LONG, field.children[1])
 
         except UnexpectedToken as e:
             if not e.token.type == "$END":
@@ -52,6 +52,7 @@ class Linter:
             return
 
     def parse_error(self, e):
+        # print(e)
         err = e.match_examples(self.parser.parse, DB_EX)
         if not err:
             return True
@@ -67,6 +68,8 @@ class Linter:
         if err is ClosingQuoteExpected:
             pass
         if err is ClosingBraceExpected:
+            if "NEWLINE" in e.accepts:
+                e.interactive_parser.feed_token(Token("NEWLINE", "\n"))
             e.interactive_parser.feed_token(Token("RBRACE", "}"))
         if err is OpeningBraceExpected:
             e.interactive_parser.feed_token(Token("LBRACE", "{"))
@@ -74,11 +77,15 @@ class Linter:
             if e.token.type == "COMMA":
                 ignore = True
         if err is ClosingQuoteExpected:
-            e.interactive_parser.feed_token(Token("RPAR", ")"))
-            e.interactive_parser.feed_token(Token("LBRACE", ")"))
-
+            pass
+        if err is InvalidDeclaration:
+            e.interactive_parser.feed_token(Token("_FIELD_HEAD", "field("))
         if not ignore:
             print_error(err.label, e)
             self.grammar_error = True
 
         return True
+
+
+linter = Linter()
+linter.lint("""record(foo, "bar) {\n fied(DESC, "bar")\n field(EVNT, "aaa")\n}""")

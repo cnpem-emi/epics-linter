@@ -25,30 +25,33 @@ class TooFewArguments:
 DB_ERROR = {
     TooManyArguments: [
         'record(foo, "bar", foo)',
-        'record(foo, "bar") { field(foo, "bar", bar) }',
-        'record(foo, "bar") { field(foo, "bar", "bar") }',
-        'record(foo, "bar") { field(foo, "bar", bar) }',
+        'record(foo, "bar") {\n field(foo, "bar", bar)\n }',
+        'record(foo, "bar") {\n field(foo, bar, bar)\n }',
+        'record(foo, "bar") {\n field(foo, bar, "bar")\n }',
+        'record(foo, "bar") {\n field(foo, "bar", "bar")\n }',
     ],
     ClosingQuoteExpected: [
-        'record(foo, "bar) { field(DESC, "bar")}',
-        'record(foo, "bar) { bar }',
-        'record(foo, "bar") { field(DESC, "bar)}',
-        'record(foo, "bar") { field(DESC, "bar") field(DESC, "bar)}',
+        'record(foo, "bar) {\n field(DESC, "bar")\n}',
+        'record(foo, "bar) {\n bar \n}',
+        'record(foo, "bar") {\n field(DESC, "bar)\n}',
+        'record(foo, "bar") {\n field(DESC, "bar")\n field(DESC, "bar)\n}',
     ],
     TooFewArguments: ["record(foo)", "record(foo,)"],
     InvalidDeclaration: [
-        'record(ai, "foo") {foo(bar, "bar")}',
-        'record(foo, "bar") { bar }',
+        'record(ai, "foo) {\nfoo(bar, "bar")}',
+        'record(foo, "bar") {\n bar }',
+        'record(foo, "bar") {\n field(DESC, "bar")\n foo(EVNT, "aaa")\n}',
     ],
     OpeningBraceExpected: [
-        'record(foo, "bar") field(DESC, "bar")}',
-        'record(foo, bar) field(DESC, "bar")',
+        'record(foo, "bar") \nfield(DESC, "bar")\n}',
+        'record(foo, bar) \nfield(DESC, "bar")\n}',
     ],
     ClosingBraceExpected: [
-        'record(foo, "bar") { field(DESC, "bar") record(foo, "bar")',
-        'record(ai, "bar") { field(DESC, "bar") field(DTYP, "stream") record(foo, "bar")',
-        'record(ai, "a) { field(foo, bar)',
-        'record(ai, "a") { field(foo, bar)',
+        'record(foo, "bar") {\n field(DESC, "bar") \nrecord(foo, "bar")',
+        'record(ai, "bar") {\n field(DESC, "bar") \nfield(DTYP, "stream") \nrecord(foo, "bar")',
+        'record(ai, "a) {\n field(foo, bar)',
+        'record(ai, "a") {\n field(foo, bar)',
+        'record(foo, "bar") {\n field(DESC, "bar")\n field(EVNT, "aaa")}',
     ],
 }
 

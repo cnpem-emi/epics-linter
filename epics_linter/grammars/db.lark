@@ -1,16 +1,18 @@
 start: record+
-record: "record(" WORD "," (WORD | ESCAPED_STRING) ")" "{"field+"}"
-field:  "field(" WORD "," (WORD | ESCAPED_STRING) ")"
+record: _RECORD_HEAD WORD "," (WORD | ESCAPED_STRING) ")" "{" "\n" field+"}"
+field:  _FIELD_HEAD WORD "," (WORD | ESCAPED_STRING) ")" "\n"
 
 _STRING_INNER: /.*?/
 _STRING_ESC_INNER: _STRING_INNER /(?<!\\)(\\\\)*?/
 
-ESCAPED_STRING : "\"" _STRING_ESC_INNER /("|\n)/
+ESCAPED_STRING : "\"" _STRING_ESC_INNER "\""
+_RECORD_HEAD: "record("
+_FIELD_HEAD: "field("
 
 %import common.WS
 %import common.WORD
 %import common.SH_COMMENT
 %import common.WS_INLINE
 
-%ignore WS
+%ignore WS_INLINE
 %ignore SH_COMMENT

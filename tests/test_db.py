@@ -46,7 +46,7 @@ def test_no_opening_bracket(linter, capfd):
     )
 
     out, _ = capfd.readouterr()
-    assert out == "'{' expected at 2:5\n"
+    assert out == "'{' expected at 1:19\n"
 
 
 def test_too_many_arguments(linter, capfd):
@@ -84,13 +84,13 @@ def test_too_many_arguments_both(linter, capfd):
 
 def test_no_close_quote(linter, capfd):
     linter.lint(
-        """record(ai, "foobar", foo) {
-    field(DESC, "Description", "foo")
+        """record(ai, "foobar, foo) {
+    field(DESC, "Description")
     }"""
     )
 
     out, _ = capfd.readouterr()
-    assert out == "Too many arguments at 1:22\nToo many arguments at 2:32\n"
+    assert out == "'\"' expected at 1:12\n"
 
 
 def test_name_too_long(linter, capfd):
