@@ -7,6 +7,7 @@ from epics_linter.db import (
     ClosingBraceExpected,
     ClosingQuoteExpected,
     InvalidDeclaration,
+    InvalidRecordType,
     OpeningBraceExpected,
     TooFewArguments,
     DB_ERROR as DB_EX,
@@ -52,7 +53,6 @@ class Linter:
             return
 
     def parse_error(self, e):
-        # print(e)
         err = e.match_examples(self.parser.parse, DB_EX)
         if not err:
             return True
@@ -65,8 +65,8 @@ class Linter:
             else:
                 e.interactive_parser.feed_token(Token("COMMA", ","))
                 e.interactive_parser.feed_token(Token("ESCAPED_STRING", ""))
-        if err is ClosingQuoteExpected:
-            pass
+        if err is InvalidRecordType:
+            e.interactive_parser.feed_token(Token("RECORD_TYPE", ""))
         if err is ClosingBraceExpected:
             if "NEWLINE" in e.accepts:
                 e.interactive_parser.feed_token(Token("NEWLINE", "\n"))
@@ -77,7 +77,7 @@ class Linter:
             if e.token.type == "COMMA":
                 ignore = True
         if err is ClosingQuoteExpected:
-            pass
+            e.interactive_parser.feed_token(Token("WORD", ""))
         if err is InvalidDeclaration:
             e.interactive_parser.feed_token(Token("_FIELD_HEAD", "field("))
         if not ignore:
@@ -85,7 +85,3 @@ class Linter:
             self.grammar_error = True
 
         return True
-
-
-linter = Linter()
-linter.lint("""record(foo, "bar) {\n fied(DESC, "bar")\n field(EVNT, "aaa")\n}""")

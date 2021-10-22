@@ -93,6 +93,17 @@ def test_no_close_quote(linter, capfd):
     assert out == "'\"' expected at 1:12\n"
 
 
+def test_invalid_record_type(linter, capfd):
+    linter.lint(
+        """record(foo, "foobar") {
+    field(DESC, "Description")
+    }"""
+    )
+
+    out, _ = capfd.readouterr()
+    assert out == "Invalid record type at 1:8\n"
+
+
 def test_name_too_long(linter, capfd):
     linter.lint(
         """record(ai, {}) {{
