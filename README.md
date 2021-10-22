@@ -1,10 +1,16 @@
-# epics-linter
+# EPICS-Linter
+
+[![PyPi](https://img.shields.io/pypi/v/epics-linter.svg)](https://pypi.org/project/epics-linter/)
+[![Lint and functional testing](https://github.com/cnpem-iot/epics-linter/actions/workflows/func-test.yml/badge.svg)](https://github.com/cnpem-iot/epics-linter/actions/workflows/func-test.yml)
 
 A project to lint and provide useful commentary on EPICS database files
 
 **Currently this project is in a very early state, as time passes, more support filetypes/field will be added.**
 
+Name suggestions, bug reports and feature requests are appreciated!
+
 ## Installation
+`pip3 install epics-linter`
 `pip3 install .`
 
 ## Utilization
